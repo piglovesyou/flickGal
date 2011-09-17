@@ -1,5 +1,5 @@
 /*****************************************************************************
- jQuery flickGal 1.0.1
+ jQuery flickGal 1.1
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
  
@@ -8,51 +8,86 @@
  http://www.gnu.org/licenses/gpl.html
  
  **************************************************************************** */
+
 (function (jQuery) {
 
-    jQuery.fn.flickGal = function (options) {
+    jQuery['fn']['flickGal'] = function (options) {
 
-        var options = jQuery.extend({
-            infinitCarousel: false,
-            lockScroll: true
+        options = jQuery['extend']({
+            'infinitCarousel': false,
+            'lockScroll': true
         }, options);
 
         // ==== Common functions and variables ====
 
-        /** @return {String} */
-        function getTranslateValue (translateX/** @type{Number|String} */) {
-            return ['translate3d(', translateX, 'px,0,0)'].join('')
-        }
-
-        // Events occur on eigher iphone or pc
+        // for setting browser prefix and some other
         var userAgent = navigator.userAgent.toLowerCase();
-        var isMobile = !!(userAgent.search(/iphone/) >= 0 || userAgent.search(/ipad/) >= 0);
+
+        /** @enum {Number} */
+        var BrowserType = {
+          WEBKIT: 0,
+          GECKO: 1,
+          MSIE: 2,
+          OPERA: 3,
+          OTHER: 4
+        };
+        var browser = (userAgent.indexOf('webkit') >= 0) ? BrowserType.WEBKIT :
+                      (userAgent.indexOf('gecko') >= 0) ? BrowserType.GECKO :
+                      (userAgent.indexOf('msie') >= 0) ? BrowserType.MSIE:
+                      (userAgent.indexOf('opera') >= 0) ? BrowserType.OPERA : BrowserType.OTHER;
+        var isMobile = !!(userAgent.indexOf('iphone') >= 0 ||
+                          userAgent.indexOf('ipad') >= 0 ||
+                          userAgent.indexOf('android') >=0);
+        var CSS_PREFIX;
+        switch (browser) {
+          case BrowserType.WEBKIT: CSS_PREFIX = '-webkit-'; break;
+          case BrowserType.GECKO: CSS_PREFIX = '-moz-'; break;
+          case BrowserType.MSIE: CSS_PREFIX = '-ms-'; break;
+          case BrowserType.OPERA: CSS_PREFIX = '-o-'; break;
+          case BrowserType.OTHER: CSS_PREFIX = ''; break;
+        }
+        var CSS_TRANSITION = CSS_PREFIX + 'transition',
+            CSS_TRANSFORM = CSS_PREFIX + 'transform',
+            CSS_TRANSFORM_ORIGIN = CSS_PREFIX + 'transform-origin',
+            TRANSLATE_PREFIX = (browser == BrowserType.WEBKIT) ? 'translate3d(' : 'translate(',
+            TRANSLATE_SUFFIX = (browser == BrowserType.WEBKIT) ? 'px,0,0)' : 'px,0)';
+
         /** @enum {String} */
         var EventType = {
             START: isMobile ? 'touchstart' : 'mousedown',
             END: isMobile ? 'touchend' : 'mouseup',
-            MOVE: isMobile ? 'touchmove' : 'mousemove'
+            MOVE: isMobile ? 'touchmove' : 'mousemove',
+            TRANSITION_END: (browser == BrowserType.WEBKIT) ? 'webkitTransitionEnd' :
+                            (browser == BrowserType.OPERA) ? 'oTransitionEnd' : 'transitionend',
+                                                                      // im not sure about these..
+            ORIENTATION_CHAGE: 'orientationchange',
+            CLICK: 'click'
         };
+
+        /** @return {String} */
+        function getCssTranslateValue (translateX/** @type{Number|String} */) {
+            return [TRANSLATE_PREFIX, translateX, TRANSLATE_SUFFIX].join('')
+        }
 
         // ==== Each execution ====
 
-        return this.each(function () {
+        return this['each'](function () {
 
             // initializing variables
-            var $flickBox = $(this),
-                $container = $('.container', $flickBox).css({
+            var $flickBox = jQuery(this),
+                $container = jQuery('.container', $flickBox)['css']({
                     overflow: 'hidden'
                 }),
-                $box = $('.containerInner', $container).css({
+                $box = jQuery('.containerInner', $container)['css']({
                     position: 'relative',
                     overflow: 'hidden',
                     top: 0,
                     left: 0
                 }),
-                $items = $('.item', $box).css({
-                    float: 'left'
+                $items = jQuery('.item', $box)['css']({
+                    'float': 'left'
                 }),
-                item_length = $items.length,
+                item_length = $items['length'],
                 item_width = $items.outerWidth(true),
                 box_width = item_width * item_length,
                 box_height = $items.outerHeight(true),
@@ -61,34 +96,34 @@
                 cd = 0,
 
             // currently displayed
-                containerOffsetLeft = $container.offset().left,
+                containerOffsetLeft = $container['offset']()['left'],
                 containerBaseX = 0; // left offset (needed to orientationing)
             $container.height(box_height).scroll(function () {
-                $(this).scrollLeft(0);
+                jQuery(this).scrollLeft(0);
             });
             $box.height(box_height).width(box_width)
-                .css('-webkit-transform', getTranslateValue(getTranslateX()));
+                ['css'](CSS_TRANSFORM, getCssTranslateValue(getTranslateX()));
 
             // **** define left offset ****
             function redefineLeftOffset(e) {
                 containerBaseX = ($container.innerWidth() - item_width) / 2;
                 moveToIndex(cd);
             }
-            window.addEventListener('orientationchange', redefineLeftOffset, false);
+            window.addEventListener(EventType.ORIENTATION_CHAGE, redefineLeftOffset, false);
             redefineLeftOffset();
 
             // **** navigation behavior ****
-            var $nav = $('.nav', $flickBox),
+            var $nav = jQuery('.nav', $flickBox),
                 $nav_a = $nav.find('a[href^=#]'),
                 $nav_children = $nav_a.parent();
-            var useNav = ($nav.length && $nav_a.length && $nav_children.length) ? true : false;
+            var useNav = !!($nav['length'] && $nav_a['length'] && $nav_children['length']);
             if (useNav) {
-                $nav_children.eq(0).addClass('selected');
+                $nav_children['eq'](0)['addClass']('selected');
                 $nav_a.bind(EventType.START, function (e) {
-                    var i = $nav_a.index(this);
-                    moveToIndex(i);
+                    var index = $nav_a.index(this);
+                    moveToIndex(index);
                     return false;
-                }).bind('click', function () {
+                }).bind(EventType.CLICK, function () {
                     return false;
                 });
             }
@@ -98,12 +133,12 @@
             box.addEventListener(EventType.MOVE, touchHandler, false);
             box.addEventListener(EventType.START, touchHandler, false);
             box.addEventListener(EventType.END, touchHandler, false);
-            box.addEventListener('webkitTransitionEnd', finishAnimation, false);
+            box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
 
             // **** back and forth arrows behavior (optional) ****
-            var $prev = $('.prev', $flickBox),
-                $next = $('.next', $flickBox);
-            var useArrows = !!($prev.length && $next.length);
+            var $prev = jQuery('.prev', $flickBox),
+                $next = jQuery('.next', $flickBox);
+            var useArrows = !!($prev['length'] && $next['length']);
             if (useArrows) {
                 function prevTappedHandler() {
                     cd = (cd > 0) ? cd - 1 : options.infinitCarousel ? item_length - 1 : cd;
@@ -111,17 +146,18 @@
                 }
 
                 function nextTappedHandler() {
-                    cd = (cd < item_length - 1) ? cd + 1 : options.infinitCarousel ? 0 : cd;
+                    cd = (cd < item_length - 1) ? cd + 1 :
+                        options.infinitCarousel ? 0 : cd;
                     moveToIndex(cd);
                 }
 
                 function disableArrow() {
-                    $prev.add($next).removeClass('off');
+                    $prev.add($next)['removeClass']('off');
 
                     if (cd === 0) {
-                        $prev.addClass('off');
+                        $prev['addClass']('off');
                     } else if (cd === item_length - 1) {
-                        $next.addClass('off');
+                        $next['addClass']('off');
                     }
                 }
                 
@@ -147,21 +183,23 @@
                         if (options.lockScroll) e.preventDefault();
                         if (isMoving) {
                             var diffX = containerBaseX + touch.pageX - startX;
-                            $box.css('-webkit-transform', getTranslateValue(startLeft + diffX));
+                            $box['css'](CSS_TRANSFORM,
+                                getCssTranslateValue(startLeft + diffX));
                         }
                         break;
 
                 // ############# touchStart
                     case EventType.START:
+                        if (!isMobile) e.preventDefault();
                         isMoving = true;
 
                         startTime = (new Date()).getTime();
                         startX = isMobile ? touch.pageX : e.clientX;
                         startLeft = getTranslateX() - containerOffsetLeft - containerBaseX;
 
-                        if ($box.hasClass('moving')) {
-                          $box.removeClass('moving')
-                              .css('-webkit-transform', getTranslateValue(containerBaseX + startLeft));
+                        if ($box['hasClass']('moving')) {
+                          $box['removeClass']('moving')['css'](CSS_TRANSFORM,
+                              getCssTranslateValue(containerBaseX + startLeft));
                         }
                         break;
 
@@ -177,19 +215,20 @@
 
             // ==== function - when the animation finished ====
 
-            function finishAnimation() {
-                $box.removeClass('moving');
+            function transitionEndHandler() {
+                $box['removeClass']('moving');
             }
 
             // ==== function - scrolling box to fit to grid ====
 
-            function moveToIndex(_cd) {
+            /** @param {Number?} opt_cd */
+            function moveToIndex(opt_cd) {
 
-                $box.addClass('moving');
+                $box['addClass']('moving');
 
                 var l = getTranslateX();
-                if (typeof(_cd) == 'number') {
-                    cd = _cd;
+                if (typeof(opt_cd) == 'number') {
+                    cd = opt_cd;
                 } else {
                     var endTime = (new Date()).getTime(),
                         timeDiff = endTime - startTime,
@@ -210,13 +249,14 @@
                 }
 
                 // detect right position to fit
-                $box.css('-webkit-transform', getTranslateValue(containerBaseX + item_width * cd * -1));
+                $box['css'](CSS_TRANSFORM,
+                    getCssTranslateValue(containerBaseX + item_width * cd * -1));
 
                 if (useNav) {
-                  $nav_children.removeClass('selected').eq(cd).addClass('selected');
+                    $nav_children['removeClass']('selected')['eq'](cd)['addClass']('selected');
                 }
                 if (useArrows) {
-                  disableArrow();
+                    disableArrow();
                 }
             }
 
@@ -224,10 +264,9 @@
 
             /** @return {Number} */
             function getTranslateX () {
-                return $box.offset().left;
+                return $box['offset']()['left'];
             }
         });
-
     };
-})(jQuery);
+})(window['jQuery']);
 
