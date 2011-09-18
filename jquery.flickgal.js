@@ -141,13 +141,13 @@
             var useArrows = !!($prev['length'] && $next['length']);
             if (useArrows) {
                 function prevTappedHandler() {
-                    cd = (cd > 0) ? cd - 1 : options.infinitCarousel ? item_length - 1 : cd;
+                    cd = (cd > 0) ? cd - 1 : options['infinitCarousel'] ? item_length - 1 : cd;
                     moveToIndex(cd);
                 }
 
                 function nextTappedHandler() {
                     cd = (cd < item_length - 1) ? cd + 1 :
-                        options.infinitCarousel ? 0 : cd;
+                        options['infinitCarousel'] ? 0 : cd;
                     moveToIndex(cd);
                 }
 
@@ -180,7 +180,7 @@
                 switch (e.type) {
                 // ############# touchMove
                     case EventType.MOVE:
-                        if (options.lockScroll) e.preventDefault();
+                        if (options['lockScroll']) e.preventDefault();
                         if (isMoving) {
                             var diffX = containerBaseX + touch.pageX - startX;
                             $box['css'](CSS_TRANSFORM,
