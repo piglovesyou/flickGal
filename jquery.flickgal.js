@@ -108,7 +108,8 @@
 
       // **** define left offset ****
       function redefineLeftOffset(e) {
-        containerOffsetLeft = $container['offset']()['left'], containerBaseX = ($container.innerWidth() - itemWidth) / 2;
+        containerOffsetLeft = $container['offset']()['left'];
+        containerBaseX = ($container.innerWidth() - itemWidth) / 2;
         moveToIndex(cd);
       }
       $(win)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset, false);
@@ -262,8 +263,17 @@
       /** @return {Number} */
 
       function getTranslateX() {
-        return $box['offset']()['left'];
+        return !(browser == BrowserType.GECKO) ? $box['offset']()['left'] : getGeckoTranslateX($box);
       }
+
+      function getGeckoTranslateX ($elm) {
+        try {
+          var translateX = win.parseInt(/(,.+?){3} (.+?)px/.exec($elm['css'](CSS_TRANSFORM))[2]);
+          return !win.isNaN(translateX) ? translateX + containerOffsetLeft : 0;
+        } catch (e) {}
+        return 0;
+      }
+
     });
   };
 })(window['jQuery'], this);
