@@ -1,5 +1,5 @@
 /*****************************************************************************
- jQuery flickGal 1.1.2
+ jQuery flickGal 1.1.3
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
  
@@ -9,7 +9,7 @@
  
  **************************************************************************** */
 
-(function ($, win) {
+(function ($, window) {
 
   $['fn']['flickGal'] = function (options) {
 
@@ -112,7 +112,7 @@
         containerBaseX = ($container.innerWidth() - itemWidth) / 2;
         moveToIndex(cd);
       }
-      $(win)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset, false);
+      $(window)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset, false);
       redefineLeftOffset();
 
       // **** navigation behavior ****
@@ -132,11 +132,16 @@
       }
 
       // **** box behavior **** 
-      var box = $box[0];
-      box.addEventListener(EventType.MOVE, touchHandler, false);
-      box.addEventListener(EventType.START, touchHandler, false);
-      box.addEventListener(EventType.END, touchHandler, false);
-      box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
+      var touchEvents = [EventType.MOVE, EventType.START, EventType.END];
+      if (isMobile) {
+        var box = $box[0];
+        $.each(touchEvents, function (i, e) {
+          box.addEventListener(e, touchHandler, false);
+        });
+        box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
+      } else {
+        $box['bind'](touchEvents.join(' '), touchHandler, false)['bind'](EventType.TRANSITION_END, transitionEndHandler, false);
+      }
 
       // **** back and forth arrows behavior (optional) ****
       var $prev = $('.prev', $flickBox),
@@ -268,8 +273,8 @@
 
       function getGeckoTranslateX ($elm) {
         try {
-          var translateX = win.parseInt(/(,.+?){3} (.+?)px/.exec($elm['css'](CSS_TRANSFORM))[2]);
-          return !win.isNaN(translateX) ? translateX + containerOffsetLeft : 0;
+          var translateX = window['parseInt'](/(,.+?){3} (.+?)px/.exec($elm['css'](CSS_TRANSFORM))[2]);
+          return !window['isNaN'](translateX) ? translateX + containerOffsetLeft : 0;
         } catch (e) {}
         return 0;
       }
