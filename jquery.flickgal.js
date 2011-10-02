@@ -135,7 +135,7 @@
       var touchEvents = [EventType.MOVE, EventType.START, EventType.END];
       if (isMobile) {
         var box = $box[0];
-        $.each(touchEvents, function (i, e) {
+        $['each'](touchEvents, function (i, e) {
           box.addEventListener(e, touchHandler, false);
         });
         box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
