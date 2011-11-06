@@ -1,5 +1,5 @@
 /*****************************************************************************
- jQuery flickGal 1.1.5
+ jQuery flickGal 1.1.6
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
  
@@ -69,10 +69,10 @@
     };
 
     /** @return {String} */
-
     function getCssTranslateValue(translateX /** @type{Number|String} */ ) {
       return [TRANSLATE_PREFIX, translateX, TRANSLATE_SUFFIX].join('')
     }
+    
 
     // ==== Each execution ====
     return this['each'](function () {
@@ -98,9 +98,13 @@
         minLeft = 0,
         maxLeft = ((itemWidth * itemLength) - itemWidth) * -1,
 
-        // currently displayed
+        // currently displayed index
         cd = 0,
-        containerOffsetLeft, containerBaseX; // left offset (needed to orientationing)
+        
+        // these two will be updated by `redefineLeftOffset()'.
+        containerOffsetLeft = 0, // left offset outside of the container
+        containerBaseX = 0; // dispance of left blank when the first is center
+
       $container['height'](boxHeight)['scroll'](function () {
         $(this)['scrollLeft'](0);
       });
@@ -225,24 +229,30 @@
       }
 
       // ==== function - scrolling box to fit to grid ====
-      /** @param {Number?} opt_cd */
+      /**
+       * @param {Number?} opt_cd
+       */
 
       function moveToIndex(opt_cd) {
 
         $box['addClass']('moving');
 
-        var l = getTranslateX();
         if (typeof (opt_cd) == 'number') {
           cd = opt_cd;
         } else {
-          var endTime = (new Date()).getTime(),
-            timeDiff = endTime - startTime,
-            distanceX = endX - startX;
+          var endTime = new Date().getTime();
+          var timeDiff = endTime - startTime;
+          var distanceX = endX - startX;
 
+          // when fast and large distance enough, go next/previous item
           if (timeDiff < 300 && Math.abs(distanceX) > 30) {
             distanceX > 0 ? cd-- : cd++;
+
+          // else, just snap to the right item
           } else {
-            var d = Math.abs((minLeft + l) - containerBaseX - itemWidth / 2);
+            var currX = getTranslateX() - containerOffsetLeft;
+            console.log(containerBaseX, currX);
+            var d = Math.abs((minLeft + currX) - containerBaseX - itemWidth / 2);
             cd = Math.floor(d / itemWidth);
           }
         }
