@@ -1,5 +1,5 @@
 /*****************************************************************************
- jQuery flickGal 1.1.3
+ jQuery flickGal 1.1.4
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
  
@@ -92,24 +92,24 @@
           'float': 'left'
         }),
         itemLength = $items['length'],
-        itemWidth = $items.outerWidth(true),
+        itemWidth = $items['outerWidth'](true),
         boxWidth = itemWidth * itemLength,
-        boxHeight = $items.outerHeight(true),
+        boxHeight = $items['outerHeight'](true),
         minLeft = 0,
         maxLeft = ((itemWidth * itemLength) - itemWidth) * -1,
 
         // currently displayed
         cd = 0,
         containerOffsetLeft, containerBaseX; // left offset (needed to orientationing)
-      $container.height(boxHeight).scroll(function () {
-        $(this).scrollLeft(0);
+      $container['height'](boxHeight)['scroll'](function () {
+        $(this)['scrollLeft'](0);
       });
-      $box.height(boxHeight).width(boxWidth)['css'](CSS_TRANSFORM, getCssTranslateValue(getTranslateX()));
+      $box['height'](boxHeight)['width'](boxWidth)['css'](CSS_TRANSFORM, getCssTranslateValue(getTranslateX()));
 
       // **** define left offset ****
       function redefineLeftOffset(e) {
         containerOffsetLeft = $container['offset']()['left'];
-        containerBaseX = ($container.innerWidth() - itemWidth) / 2;
+        containerBaseX = ($container['innerWidth']() - itemWidth) / 2;
         moveToIndex(cd);
       }
       $(window)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset, false);
@@ -117,16 +117,16 @@
 
       // **** navigation behavior ****
       var $nav = $('.nav', $flickBox),
-        $navA = $nav.find('a[href^=#]'),
-        $navChildren = $navA.parent();
+        $navA = $nav['find']('a[href^=#]'),
+        $navChildren = $navA['parent']();
       var useNav = !! ($nav['length'] && $navA['length'] && $navChildren['length']);
       if (useNav) {
         $navChildren['eq'](0)['addClass']('selected');
-        $navA.bind(EventType.START, function (e) {
-          var index = $navA.index(this);
+        $navA['bind'](EventType.START, function (e) {
+          var index = $navA['index'](this);
           moveToIndex(index);
           return false;
-        }).bind(EventType.CLICK, function () {
+        })['bind'](EventType.CLICK, function () {
           return false;
         });
       }
@@ -168,8 +168,8 @@
           }
         }
 
-        $prev.bind(EventType.START, prevTappedHandler);
-        $next.bind(EventType.START, nextTappedHandler);
+        $prev['bind'](EventType.START, prevTappedHandler);
+        $next['bind'](EventType.START, nextTappedHandler);
         disableArrow();
       }
 
