@@ -1,5 +1,5 @@
 /*****************************************************************************
- jQuery flickGal 1.1.4
+ jQuery flickGal 1.1.5
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
  
@@ -112,7 +112,7 @@
         containerBaseX = ($container['innerWidth']() - itemWidth) / 2;
         moveToIndex(cd);
       }
-      $(window)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset, false);
+      $(window)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset);
       redefineLeftOffset();
 
       // **** navigation behavior ****
@@ -140,7 +140,7 @@
         });
         box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
       } else {
-        $box['bind'](touchEvents.join(' '), touchHandler, false)['bind'](EventType.TRANSITION_END, transitionEndHandler, false);
+        $box['bind'](touchEvents.join(' '), touchHandler)['bind'](EventType.TRANSITION_END, transitionEndHandler);
       }
 
       // **** back and forth arrows behavior (optional) ****
