@@ -251,7 +251,6 @@
           // else, just snap to the right item
           } else {
             var currX = getTranslateX() - containerOffsetLeft;
-            console.log(containerBaseX, currX);
             var d = Math.abs((minLeft + currX) - containerBaseX - itemWidth / 2);
             cd = Math.floor(d / itemWidth);
           }
