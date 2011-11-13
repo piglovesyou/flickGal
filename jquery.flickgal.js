@@ -1,7 +1,7 @@
 (function() {
   /*
   
-   jQuery flickGal 1.1.6
+   jQuery flickGal 1.1.7
    
    Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
    
@@ -10,8 +10,10 @@
    http://www.gnu.org/licenses/gpl.html
    
   */
-  var BrowserType, CSS_PREFIX, CSS_TRANSFORM, CSS_TRANSFORM_ORIGIN, CSS_TRANSITION, EventType, TRANSLATE_PREFIX, TRANSLATE_SUFFIX, browser, getCssTranslateValue, isMobile, userAgent;
-  userAgent = navigator.userAgent.toLowerCase();
+  /*
+    init variables about browsers environment
+  */
+  var BrowserType, CSS_PREFIX, CSS_TRANSFORM, CSS_TRANSFORM_ORIGIN, CSS_TRANSITION, EventType, TRANSLATE_PREFIX, TRANSLATE_SUFFIX, currentBrowser, getCssTranslateValue, isMobile, userAgent;
   BrowserType = {
     WEBKIT: 0,
     GECKO: 1,
@@ -19,9 +21,20 @@
     OPERA: 3,
     OTHER: 4
   };
-  browser = (userAgent.indexOf("webkit") >= 0 ? BrowserType.WEBKIT : (userAgent.indexOf("gecko") >= 0 ? BrowserType.GECKO : (userAgent.indexOf("msie") >= 0 ? BrowserType.MSIE : (userAgent.indexOf("opera") >= 0 ? BrowserType.OPERA : BrowserType.OTHER))));
-  isMobile = !!(userAgent.indexOf("iphone") >= 0 || userAgent.indexOf("ipad") >= 0 || userAgent.indexOf("android") >= 0);
-  switch (browser) {
+  userAgent = navigator.userAgent.toLowerCase();
+  if (userAgent.indexOf("webkit") >= 0) {
+    currentBrowser = BrowserType.WEBKIT;
+  } else if (userAgent.indexOf("gecko") >= 0) {
+    currentBrowser = BrowserType.GECKO;
+  } else if (userAgent.indexOf("msie") >= 0) {
+    currentBrowser = BrowserType.MSIE;
+  } else if (userAgent.indexOf("opera") >= 0) {
+    currentBrowser = BrowserType.OPERA;
+  } else {
+    currentBrowser = BrowserType.OTHER;
+  }
+  isMobile = userAgent.indexOf("iphone") >= 0 || userAgent.indexOf("ipad") >= 0 || userAgent.indexOf("android") >= 0;
+  switch (currentBrowser) {
     case BrowserType.WEBKIT:
       CSS_PREFIX = "-webkit-";
       break;
@@ -40,26 +53,40 @@
   CSS_TRANSITION = CSS_PREFIX + "transition";
   CSS_TRANSFORM = CSS_PREFIX + "transform";
   CSS_TRANSFORM_ORIGIN = CSS_PREFIX + "transform-origin";
-  TRANSLATE_PREFIX = (browser === BrowserType.WEBKIT ? "translate3d(" : "translate(");
-  TRANSLATE_SUFFIX = (browser === BrowserType.WEBKIT ? "px,0,0)" : "px,0)");
+  TRANSLATE_PREFIX = currentBrowser === BrowserType.WEBKIT ? "translate3d(" : "translate(";
+  TRANSLATE_SUFFIX = currentBrowser === BrowserType.WEBKIT ? "px,0,0)" : "px,0)";
   EventType = {
-    START: (isMobile ? "touchstart" : "mousedown"),
-    END: (isMobile ? "touchend" : "mouseup"),
-    MOVE: (isMobile ? "touchmove" : "mousemove"),
-    TRANSITION_END: (browser === BrowserType.WEBKIT ? "webkitTransitionEnd" : (browser === BrowserType.OPERA ? "oTransitionEnd" : "transitionend")),
+    START: isMobile ? "touchstart" : "mousedown",
+    END: isMobile ? "touchend" : "mouseup",
+    MOVE: isMobile ? "touchmove" : "mousemove",
+    TRANSITION_END: currentBrowser === BrowserType.WEBKIT ? "webkitTransitionEnd" : currentBrowser === BrowserType.OPERA ? "oTransitionEnd" : "transitionend",
     ORIENTATION_CHAGE: "orientationchange",
     CLICK: "click",
     RESIZE: "resize"
   };
+  /*
+    common function
+  */
   getCssTranslateValue = function(translateX) {
     return [TRANSLATE_PREFIX, translateX, TRANSLATE_SUFFIX].join("");
   };
-  jQuery["fn"]["flickGal"] = function(options) {
-    options = $["extend"]({
+  /*
+    implement plugin
+  */
+  window.jQuery["fn"]["flickGal"] = function(options) {
+    /*
+        option
+      */    options = $["extend"]({
       infinitCarousel: false,
       lockScroll: true
     }, options);
+    /*
+        iterate each element in jQuery object
+      */
     return this["each"](function() {
+      /*
+            private variables
+          */
       var $box, $container, $flickBox, $items, $nav, $navA, $navChildren, $next, $prev, box, boxHeight, boxWidth, cd, containerBaseX, containerOffsetLeft, disableArrow, endX, getGeckoTranslateX, getTranslateX, isMoving, itemLength, itemWidth, maxLeft, minLeft, moveToIndex, nextTappedHandler, prevTappedHandler, redefineLeftOffset, startLeft, startTime, startX, touchEvents, touchHandler, transitionEndHandler, useArrows, useNav;
       $flickBox = $(this);
       $container = $(".container", $flickBox)["css"]({
@@ -72,7 +99,7 @@
         left: 0
       });
       $items = $(".item", $box)["css"]({
-        float: "left"
+        "float": "left"
       });
       itemLength = $items["length"];
       itemWidth = $items["outerWidth"](true);
@@ -83,6 +110,9 @@
       cd = 0;
       containerOffsetLeft = 0;
       containerBaseX = 0;
+      /*
+            private functions
+          */
       getGeckoTranslateX = function($elm) {
         var translateX;
         try {
@@ -96,7 +126,7 @@
         return 0;
       };
       getTranslateX = function() {
-        if (!(browser === BrowserType.GECKO)) {
+        if (currentBrowser !== BrowserType.GECKO) {
           return $box["offset"]()["left"];
         } else {
           return getGeckoTranslateX($box);
@@ -107,20 +137,26 @@
         containerBaseX = ($container["innerWidth"]() - itemWidth) / 2;
         return moveToIndex(cd);
       };
+      /*
+            implement navigation
+          */
       $nav = $(".nav", $flickBox);
       $navA = $nav["find"]("a[href^=#]");
       $navChildren = $navA["parent"]();
       useNav = !!($nav["length"] && $navA["length"] && $navChildren["length"]);
+      /*
+            implement next/prev arrows
+          */
       $prev = $(".prev", $flickBox);
       $next = $(".next", $flickBox);
       useArrows = !!($prev["length"] && $next["length"]);
       if (useArrows) {
         prevTappedHandler = function() {
-          cd = (cd > 0 ? cd - 1 : (options["infinitCarousel"] ? itemLength - 1 : cd));
+          cd = cd > 0 ? cd - 1 : options["infinitCarousel"] ? itemLength - 1 : cd;
           return moveToIndex(cd);
         };
         nextTappedHandler = function() {
-          cd = (cd < itemLength - 1 ? cd + 1 : (options["infinitCarousel"] ? 0 : cd));
+          cd = cd < itemLength - 1 ? cd + 1 : options["infinitCarousel"] ? 0 : cd;
           return moveToIndex(cd);
         };
         disableArrow = function() {
@@ -134,6 +170,9 @@
           }
         };
       }
+      /*
+            implement core event handling
+          */
       startX = 0;
       endX = 0;
       startTime = 0;
@@ -141,7 +180,7 @@
       isMoving = false;
       touchHandler = function(e) {
         var diffX, touch;
-        touch = (isMobile ? e.touches[0] : e);
+        touch = isMobile ? e.touches[0] : e;
         switch (e.type) {
           case EventType.MOVE:
             if (options["lockScroll"]) {
@@ -158,7 +197,7 @@
             }
             isMoving = true;
             startTime = (new Date()).getTime();
-            startX = (isMobile ? touch.pageX : e.clientX);
+            startX = isMobile ? touch.pageX : e.clientX;
             startLeft = getTranslateX() - containerOffsetLeft - containerBaseX;
             if ($box["hasClass"]("moving")) {
               return $box["removeClass"]("moving")["css"](CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft));
@@ -167,7 +206,7 @@
           case EventType.END:
             startLeft = 0;
             isMoving = false;
-            endX = (isMobile ? e.changedTouches[0].pageX : e.clientX);
+            endX = isMobile ? e.changedTouches[0].pageX : e.clientX;
             return moveToIndex();
         }
       };
@@ -210,6 +249,9 @@
           return disableArrow();
         }
       };
+      /*
+            initialize base variable and bind events
+          */
       $container["height"](boxHeight)["scroll"](function() {
         return $(this)["scrollLeft"](0);
       });
