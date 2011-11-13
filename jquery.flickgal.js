@@ -69,11 +69,10 @@
     };
 
     /** @return {String} */
-    function getCssTranslateValue(translateX /** @type{Number|String} */ ) {
+    var getCssTranslateValue = function (translateX /** @type{Number|String} */ ) {
       return [TRANSLATE_PREFIX, translateX, TRANSLATE_SUFFIX].join('')
     }
     
-
     // ==== Each execution ====
     return this['each'](function () {
 
@@ -105,64 +104,51 @@
         containerOffsetLeft = 0, // left offset outside of the container
         containerBaseX = 0; // dispance of left blank when the first is center
 
-      $container['height'](boxHeight)['scroll'](function () {
-        $(this)['scrollLeft'](0);
-      });
-      $box['height'](boxHeight)['width'](boxWidth)['css'](CSS_TRANSFORM, getCssTranslateValue(getTranslateX()));
+
+      // ==== internal functions ====
+      /** @return {Number} */
+
+      var getGeckoTranslateX = function ($elm) {
+        try {
+          var translateX = window['parseInt'](/(,.+?){3} (.+?)px/.exec($elm['css'](CSS_TRANSFORM))[2]);
+          return !window['isNaN'](translateX) ? translateX + containerOffsetLeft : 0;
+        } catch (e) {}
+        return 0;
+      }
+
+      var getTranslateX = function () {
+        return !(browser == BrowserType.GECKO) ? $box['offset']()['left'] : getGeckoTranslateX($box);
+      }
 
       // **** define left offset ****
-      function redefineLeftOffset(e) {
+      var redefineLeftOffset = function (e) {
         containerOffsetLeft = $container['offset']()['left'];
         containerBaseX = ($container['innerWidth']() - itemWidth) / 2;
         moveToIndex(cd);
       }
-      $(window)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset);
-      redefineLeftOffset();
 
       // **** navigation behavior ****
       var $nav = $('.nav', $flickBox),
         $navA = $nav['find']('a[href^=#]'),
         $navChildren = $navA['parent']();
       var useNav = !! ($nav['length'] && $navA['length'] && $navChildren['length']);
-      if (useNav) {
-        $navChildren['eq'](0)['addClass']('selected');
-        $navA['bind'](EventType.START, function (e) {
-          var index = $navA['index'](this);
-          moveToIndex(index);
-          return false;
-        })['bind'](EventType.CLICK, function () {
-          return false;
-        });
-      }
-
-      // **** box behavior **** 
-      var touchEvents = [EventType.MOVE, EventType.START, EventType.END];
-      if (isMobile) {
-        var box = $box[0];
-        $['each'](touchEvents, function (i, e) {
-          box.addEventListener(e, touchHandler, false);
-        });
-        box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
-      } else {
-        $box['bind'](touchEvents.join(' '), touchHandler)['bind'](EventType.TRANSITION_END, transitionEndHandler);
-      }
 
       // **** back and forth arrows behavior (optional) ****
       var $prev = $('.prev', $flickBox),
         $next = $('.next', $flickBox);
       var useArrows = !! ($prev['length'] && $next['length']);
       if (useArrows) {
-        function prevTappedHandler() {
+        var prevTappedHandler = function () {
           cd = (cd > 0) ? cd - 1 : options['infinitCarousel'] ? itemLength - 1 : cd;
           moveToIndex(cd);
         }
 
-        function nextTappedHandler() {
+        var nextTappedHandler = function () {
           cd = (cd < itemLength - 1) ? cd + 1 : options['infinitCarousel'] ? 0 : cd;
           moveToIndex(cd);
         }
 
-        function disableArrow() {
+        var disableArrow = function () {
           $prev.add($next)['removeClass']('off');
 
           if (cd === 0) {
@@ -171,10 +157,6 @@
             $next['addClass']('off');
           }
         }
-
-        $prev['bind'](EventType.START, prevTappedHandler);
-        $next['bind'](EventType.START, nextTappedHandler);
-        disableArrow();
       }
 
       // ==== function - touch event handler ====
@@ -184,7 +166,7 @@
         startLeft = 0,
         isMoving = false;
 
-      function touchHandler(e) {
+      var touchHandler = function (e) {
 
         var touch = isMobile ? e.touches[0] : e;
 
@@ -224,7 +206,7 @@
 
       // ==== function - when the animation finished ====
 
-      function transitionEndHandler() {
+      var transitionEndHandler = function () {
         $box['removeClass']('moving');
       }
 
@@ -233,7 +215,7 @@
        * @param {Number?} opt_cd
        */
 
-      function moveToIndex(opt_cd) {
+      var moveToIndex = function (opt_cd) {
 
         $box['addClass']('moving');
 
@@ -273,20 +255,45 @@
         }
       }
 
-      // ==== internal functions ====
-      /** @return {Number} */
 
-      function getTranslateX() {
-        return !(browser == BrowserType.GECKO) ? $box['offset']()['left'] : getGeckoTranslateX($box);
+      // ==== base size initialize and event binding ====
+
+      $container['height'](boxHeight)['scroll'](function () {
+        $(this)['scrollLeft'](0);
+      });
+      $box['height'](boxHeight)['width'](boxWidth)['css'](CSS_TRANSFORM, getCssTranslateValue(getTranslateX()));
+
+      $(window)['bind'](isMobile ? EventType.ORIENTATION_CHAGE : EventType.RESIZE, redefineLeftOffset);
+      redefineLeftOffset();
+
+      if (useNav) {
+        $navChildren['eq'](0)['addClass']('selected');
+        $navA['bind'](EventType.START, function (e) {
+          var index = $navA['index'](this);
+          moveToIndex(index);
+          return false;
+        })['bind'](EventType.CLICK, function () {
+          return false;
+        });
       }
 
-      function getGeckoTranslateX ($elm) {
-        try {
-          var translateX = window['parseInt'](/(,.+?){3} (.+?)px/.exec($elm['css'](CSS_TRANSFORM))[2]);
-          return !window['isNaN'](translateX) ? translateX + containerOffsetLeft : 0;
-        } catch (e) {}
-        return 0;
+      if (useArrows) {
+        $prev['bind'](EventType.START, prevTappedHandler);
+        $next['bind'](EventType.START, nextTappedHandler);
+        disableArrow();
       }
+      
+      var touchEvents = [EventType.MOVE, EventType.START, EventType.END];
+      if (isMobile) {
+        var box = $box[0];
+        $['each'](touchEvents, function (i, e) {
+          box.addEventListener(e, touchHandler, false);
+        });
+        box.addEventListener(EventType.TRANSITION_END, transitionEndHandler, false);
+      } else {
+        $box['bind'](touchEvents.join(' '), touchHandler)['bind'](EventType.TRANSITION_END, transitionEndHandler);
+      }
+
 
     });
   };
