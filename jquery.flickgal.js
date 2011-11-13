@@ -1,7 +1,7 @@
 (function() {
   /*
   
-   jQuery flickGal 1.1.7
+   jQuery flickGal 1.1.8
    
    Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
    
@@ -73,7 +73,7 @@
   /*
     implement plugin
   */
-  window.jQuery["fn"]["flickGal"] = function(options) {
+  window["jQuery"]["fn"]["flickGal"] = function(options) {
     /*
         option
       */    options = $["extend"]({
