@@ -1,7 +1,7 @@
 (function() {
   /*
   
-   jQuery flickGal 1.1.9
+   jQuery flickGal 1.1.10
    
    Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
    
@@ -183,7 +183,6 @@
         touch = isMobile ? e.touches[0] : e;
         switch (e.type) {
           case EventType.MOVE:
-            console.log(options['lockScroll']);
             if (options['lockScroll']) {
               e.preventDefault();
             }

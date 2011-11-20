@@ -1,6 +1,6 @@
 ###
 
- jQuery flickGal 1.1.9
+ jQuery flickGal 1.1.10
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
  
@@ -178,7 +178,6 @@ window['jQuery']['fn']['flickGal'] = (options) ->
       touch = if isMobile then e.touches[0] else e
       switch e.type
         when EventType.MOVE
-          console.log options['lockScroll']
           e.preventDefault()  if options['lockScroll']
           if isMoving
             diffX = containerBaseX + touch.pageX - startX
