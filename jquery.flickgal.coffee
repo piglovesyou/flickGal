@@ -1,6 +1,6 @@
 ###
 
- jQuery flickGal 1.1.10
+ jQuery flickGal 1.1.11
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
  
@@ -34,7 +34,9 @@ else if userAgent.indexOf('opera') >= 0
 else
   currentBrowser = BrowserType.OTHER
 
-isMobile = userAgent.indexOf('iphone') >= 0 or userAgent.indexOf('ipad') >= 0 or userAgent.indexOf('android') >= 0
+isIOS = userAgent.indexOf('iphone') >= 0 or userAgent.indexOf('ipad') >= 0
+isAndroid = userAgent.indexOf('android') >= 0
+isMobile = isIOS or isAndroid
 
 switch currentBrowser
   when BrowserType.WEBKIT
@@ -62,6 +64,8 @@ EventType =
   ORIENTATION_CHAGE: 'orientationchange'
   CLICK: 'click'
   RESIZE: 'resize'
+
+EventType.ORIENTATION_CHAGE = "#{EventType.ORIENTATION_CHAGE} #{EventType.RESIZE}"  if isAndroid  # XXX
 
 
 ###

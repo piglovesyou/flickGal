@@ -1,7 +1,7 @@
 (function() {
   /*
   
-   jQuery flickGal 1.1.10
+   jQuery flickGal 1.1.11
    
    Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
    
@@ -13,7 +13,7 @@
   /*
     init variables about browsers environment
   */
-  var BrowserType, CSS_PREFIX, CSS_TRANSFORM, CSS_TRANSFORM_ORIGIN, CSS_TRANSITION, EventType, TRANSLATE_PREFIX, TRANSLATE_SUFFIX, currentBrowser, getCssTranslateValue, isMobile, userAgent;
+  var BrowserType, CSS_PREFIX, CSS_TRANSFORM, CSS_TRANSFORM_ORIGIN, CSS_TRANSITION, EventType, TRANSLATE_PREFIX, TRANSLATE_SUFFIX, currentBrowser, getCssTranslateValue, isAndroid, isIOS, isMobile, userAgent;
   BrowserType = {
     WEBKIT: 0,
     GECKO: 1,
@@ -33,7 +33,9 @@
   } else {
     currentBrowser = BrowserType.OTHER;
   }
-  isMobile = userAgent.indexOf('iphone') >= 0 || userAgent.indexOf('ipad') >= 0 || userAgent.indexOf('android') >= 0;
+  isIOS = userAgent.indexOf('iphone') >= 0 || userAgent.indexOf('ipad') >= 0;
+  isAndroid = userAgent.indexOf('android') >= 0;
+  isMobile = isIOS || isAndroid;
   switch (currentBrowser) {
     case BrowserType.WEBKIT:
       CSS_PREFIX = '-webkit-';
@@ -64,6 +66,9 @@
     CLICK: 'click',
     RESIZE: 'resize'
   };
+  if (isAndroid) {
+    EventType.ORIENTATION_CHAGE = "" + EventType.ORIENTATION_CHAGE + " " + EventType.RESIZE;
+  }
   /*
     common function
   */
