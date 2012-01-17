@@ -1,9 +1,9 @@
 (function() {
   /*
   
-   jQuery flickGal 1.1.11
+   jQuery flickGal 1.2
    
-   Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo.html)
+   Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo)
    
    Dual licensed under the MIT and GPL licenses:
    http://www.opensource.org/licenses/mit-license.php
