@@ -1,4 +1,5 @@
 (function() {
+
   /*
   
    jQuery flickGal 1.2
@@ -8,12 +9,14 @@
    Dual licensed under the MIT and GPL licenses:
    http://www.opensource.org/licenses/mit-license.php
    http://www.gnu.org/licenses/gpl.html
-   
   */
+
   /*
     init variables about browsers environment
   */
+
   var BrowserType, CSS_PREFIX, CSS_TRANSFORM, CSS_TRANSFORM_ORIGIN, CSS_TRANSITION, EventType, TRANSLATE_PREFIX, TRANSLATE_SUFFIX, currentBrowser, getCssTranslateValue, isAndroid, isIOS, isMobile, userAgent;
+
   BrowserType = {
     WEBKIT: 0,
     GECKO: 1,
@@ -21,7 +24,9 @@
     OPERA: 3,
     OTHER: 4
   };
+
   userAgent = navigator.userAgent.toLowerCase();
+
   if (userAgent.indexOf('webkit') >= 0) {
     currentBrowser = BrowserType.WEBKIT;
   } else if (userAgent.indexOf('gecko') >= 0) {
@@ -33,9 +38,13 @@
   } else {
     currentBrowser = BrowserType.OTHER;
   }
+
   isIOS = userAgent.indexOf('iphone') >= 0 || userAgent.indexOf('ipad') >= 0;
+
   isAndroid = userAgent.indexOf('android') >= 0;
+
   isMobile = isIOS || isAndroid;
+
   switch (currentBrowser) {
     case BrowserType.WEBKIT:
       CSS_PREFIX = '-webkit-';
@@ -52,11 +61,17 @@
     case BrowserType.OTHER:
       CSS_PREFIX = '';
   }
+
   CSS_TRANSITION = CSS_PREFIX + 'transition';
+
   CSS_TRANSFORM = CSS_PREFIX + 'transform';
+
   CSS_TRANSFORM_ORIGIN = CSS_PREFIX + 'transform-origin';
+
   TRANSLATE_PREFIX = currentBrowser === BrowserType.WEBKIT ? 'translate3d(' : 'translate(';
+
   TRANSLATE_SUFFIX = currentBrowser === BrowserType.WEBKIT ? 'px,0,0)' : 'px,0)';
+
   EventType = {
     START: isMobile ? 'touchstart' : 'mousedown',
     END: isMobile ? 'touchend' : 'mouseup',
@@ -66,32 +81,37 @@
     CLICK: 'click',
     RESIZE: 'resize'
   };
+
   if (isAndroid) {
     EventType.ORIENTATION_CHAGE = "" + EventType.ORIENTATION_CHAGE + " " + EventType.RESIZE;
   }
+
   /*
     common function
   */
+
   getCssTranslateValue = function(translateX) {
     return [TRANSLATE_PREFIX, translateX, TRANSLATE_SUFFIX].join('');
   };
+
   /*
     implement plugin
   */
+
   window['jQuery']['fn']['flickGal'] = function(options) {
     /*
         option
-      */    options = $['extend']({
+    */    options = $['extend']({
       'infinitCarousel': false,
       'lockScroll': true
     }, options);
     /*
         iterate each element in jQuery object
-      */
+    */
     return this['each'](function() {
       /*
             private variables
-          */
+      */
       var $box, $container, $flickBox, $items, $nav, $navA, $navChildren, $next, $prev, box, boxHeight, boxWidth, cd, containerBaseX, containerOffsetLeft, disableArrow, endX, getGeckoTranslateX, getTranslateX, isMoving, itemLength, itemWidth, maxLeft, minLeft, moveToIndex, nextTappedHandler, prevTappedHandler, redefineLeftOffset, startLeft, startTime, startX, touchEvents, touchHandler, transitionEndHandler, useArrows, useNav;
       $flickBox = $(this);
       $container = $('.container', $flickBox)['css']({
@@ -117,7 +137,7 @@
       containerBaseX = 0;
       /*
             private functions
-          */
+      */
       getGeckoTranslateX = function($elm) {
         var translateX;
         try {
@@ -127,7 +147,7 @@
           } else {
             return 0;
           }
-        } catch (_e) {}
+        } catch (_error) {}
         return 0;
       };
       getTranslateX = function() {
@@ -144,14 +164,14 @@
       };
       /*
             implement navigation
-          */
+      */
       $nav = $('.nav', $flickBox);
       $navA = $nav['find']('a[href^=#]');
       $navChildren = $navA['parent']();
       useNav = !!($nav['length'] && $navA['length'] && $navChildren['length']);
       /*
             implement next/prev arrows
-          */
+      */
       $prev = $('.prev', $flickBox);
       $next = $('.next', $flickBox);
       useArrows = !!($prev['length'] && $next['length']);
@@ -169,15 +189,13 @@
           if (cd === 0) {
             return $prev['addClass']('off');
           } else {
-            if (cd === itemLength - 1) {
-              return $next['addClass']('off');
-            }
+            if (cd === itemLength - 1) return $next['addClass']('off');
           }
         };
       }
       /*
             implement core event handling
-          */
+      */
       startX = 0;
       endX = 0;
       startTime = 0;
@@ -188,18 +206,14 @@
         touch = isMobile ? e.touches[0] : e;
         switch (e.type) {
           case EventType.MOVE:
-            if (options['lockScroll']) {
-              e.preventDefault();
-            }
+            if (options['lockScroll']) e.preventDefault();
             if (isMoving) {
               diffX = containerBaseX + touch.pageX - startX;
               return $box['css'](CSS_TRANSFORM, getCssTranslateValue(startLeft + diffX));
             }
             break;
           case EventType.START:
-            if (!isMobile) {
-              e.preventDefault();
-            }
+            if (!isMobile) e.preventDefault();
             isMoving = true;
             startTime = (new Date()).getTime();
             startX = isMobile ? touch.pageX : e.clientX;
@@ -242,21 +256,17 @@
         if (cd > itemLength - 1) {
           cd = itemLength - 1;
         } else {
-          if (cd < 0) {
-            cd = 0;
-          }
+          if (cd < 0) cd = 0;
         }
         $box['css'](CSS_TRANSFORM, getCssTranslateValue(containerBaseX + itemWidth * cd * -1));
         if (useNav) {
           $navChildren['removeClass']('selected')['eq'](cd)['addClass']('selected');
         }
-        if (useArrows) {
-          return disableArrow();
-        }
+        if (useArrows) return disableArrow();
       };
       /*
             initialize base variable and bind events
-          */
+      */
       $container['height'](boxHeight)['scroll'](function() {
         return $(this)['scrollLeft'](0);
       });
@@ -291,4 +301,5 @@
       }
     });
   };
+
 }).call(this);
