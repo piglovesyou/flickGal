@@ -11,14 +11,14 @@ option '-w', '--watch', 'continue to watch the files and rebuild them when they 
 
 # Start develop.
 task 'build', 'Build coffeescripts.', (options) ->
-  options = _.defaults
-    watch: true
-  , options
+  # options = _.defaults
+  #   watch: true
+  # , options
   muffin.run
     files: './**/*'
     options: options
     map:
-      '(jquery.flickgal).coffee': (matches) ->
+      '.*?\/(jquery.flickgal).coffee': (matches) ->
         muffin.compileScript matches[0], "./#{matches[1]}.js", options
 
 
