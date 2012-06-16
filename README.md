@@ -1,7 +1,16 @@
 # flickGal
-![flickGal](
+![flickGal](/piglovesyou/flickGal/raw/master/src/title.png)
+
 A light weight jQuery plugin to implement flick gallery for smart phone.
 
+## Features
+Main features of this plugin are:
+- Light weight. (3.2k)
+- Designer friendry. (HTML based)
+
+This plugin cannot do:
+- Horizontal scroll (who ever wants?)
+- Auto scroll. This will need a lot of options, which I don't like.
 
 ## Demo
 
@@ -9,11 +18,79 @@ Here is a quick demo.
 
 http://stakam.net/jquery/flickgal/demo
 
+Tested on iOS Safari and Android 4.0. PC browsers? Yeah. IE? Na.
+
 
 ## How to use
-
+Only 3 steps!
+### 1. Build HTML like below.
 ```html
+<div class="yourElement"><!-- Main container -->
+
+  <div class="container"><!-- Flickable element (required) -->
+    <div class="containerInner"><!-- (required) -->
+      <div id="sea01" class="item"><img alt="" src="images/sea/01.jpg" /></div><!-- must have `item' for class name -->
+      <div id="sea02" class="item"><img alt="" src="images/sea/02.jpg" /></div>
+      <div id="sea03" class="item"><img alt="" src="images/sea/03.jpg" /></div>
+    </div>
+  </div>
+
+  <div class="nav"><!-- Tab, indicator or others (optional) -->
+    <ul>
+      <li class="sea01"><a href="#sea01">・</a></li>
+      <li class="sea02"><a href="#sea02">・</a></li>
+      <li class="sea03"><a href="#sea03">・</a></li>
+    </ul>
+  </div>
+
+  <div class="arrows"><!-- Next and prev element (optional) -->
+    <span class="prev">Previous</span><!-- must have `prev' for className -->
+    <span class="next">Next</span><!-- must have `next' for className -->
+  </div>
+
+</div>
+```
+
+### 2. Write CSS.
+```css
+.yourElement .item { width: 200px } /* This is required if you have <img> element in .item element. */
+.yourElement .moving {
+  /* You can change transition-duration of course. */
+  transition: transform .2s ease-out;
+  -webkit-transition: -webkit-transform .2s ease-out;
+  -moz-transition: -moz-transform .2s ease-out;
+}
+```
+
+### 3. Include javascripts and run.
+```html
+<script src="./javascripts/jquery-1.4.3.min.js"></script>
+<script src="./javascripts/jquery.flickgal.js"></script>
 <script>
-alert('yeah');
+$(function(){
+  $(".yourElement").flickGal();
+});
 </script>
+```
+
+## Available options
+```javascript
+$(function(){
+  $(".yourElement").flickGal({
+    infinitCarousel : false,
+    lockScroll      : true
+  });
+});
+```
+| Options | Default value | Description |
+| ------------ | ------------- | ------------ |
+| infinitCarousel | false  | If true and you have prev/next elements, the last item slides to the first item and vise versa.  |
+| lockScroll | true  | Lock horizontal scroll while sliding. If you have large images in .item element, you may want this fasle. |
+
+
+## Lisence
+```
+Dual licensed under the MIT and GPL licenses:
+ http://www.opensource.org/licenses/mit-license.php
+ http://www.gnu.org/licenses/gpl.html
 ```
