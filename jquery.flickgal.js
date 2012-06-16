@@ -1,20 +1,22 @@
+
+/*
+
+ jQuery flickGal 1.2
+ 
+ Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo)
+ 
+ Dual licensed under the MIT and GPL licenses:
+ http://www.opensource.org/licenses/mit-license.php
+ http://www.gnu.org/licenses/gpl.html
+*/
+
+
+/*
+  init variables about browsers environment
+*/
+
+
 (function() {
-
-  /*
-  
-   jQuery flickGal 1.2
-   
-   Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo)
-   
-   Dual licensed under the MIT and GPL licenses:
-   http://www.opensource.org/licenses/mit-license.php
-   http://www.gnu.org/licenses/gpl.html
-  */
-
-  /*
-    init variables about browsers environment
-  */
-
   var BrowserType, CSS_PREFIX, CSS_TRANSFORM, CSS_TRANSFORM_ORIGIN, CSS_TRANSITION, EventType, TRANSLATE_PREFIX, TRANSLATE_SUFFIX, currentBrowser, getCssTranslateValue, isAndroid, isIOS, isMobile, userAgent;
 
   BrowserType = {
@@ -90,6 +92,7 @@
     common function
   */
 
+
   getCssTranslateValue = function(translateX) {
     return [TRANSLATE_PREFIX, translateX, TRANSLATE_SUFFIX].join('');
   };
@@ -98,20 +101,24 @@
     implement plugin
   */
 
+
   window['jQuery']['fn']['flickGal'] = function(options) {
     /*
         option
-    */    options = $['extend']({
+    */
+    options = $['extend']({
       'infinitCarousel': false,
       'lockScroll': true
     }, options);
     /*
         iterate each element in jQuery object
     */
+
     return this['each'](function() {
       /*
             private variables
       */
+
       var $box, $container, $flickBox, $items, $nav, $navA, $navChildren, $next, $prev, box, boxHeight, boxWidth, cd, containerBaseX, containerOffsetLeft, disableArrow, endX, getGeckoTranslateX, getTranslateX, isMoving, itemLength, itemWidth, maxLeft, minLeft, moveToIndex, nextTappedHandler, prevTappedHandler, redefineLeftOffset, startLeft, startTime, startX, touchEvents, touchHandler, transitionEndHandler, useArrows, useNav;
       $flickBox = $(this);
       $container = $('.container', $flickBox)['css']({
@@ -138,6 +145,7 @@
       /*
             private functions
       */
+
       getGeckoTranslateX = function($elm) {
         var translateX;
         try {
@@ -165,6 +173,7 @@
       /*
             implement navigation
       */
+
       $nav = $('.nav', $flickBox);
       $navA = $nav['find']('a[href^=#]');
       $navChildren = $navA['parent']();
@@ -172,6 +181,7 @@
       /*
             implement next/prev arrows
       */
+
       $prev = $('.prev', $flickBox);
       $next = $('.next', $flickBox);
       useArrows = !!($prev['length'] && $next['length']);
@@ -189,13 +199,16 @@
           if (cd === 0) {
             return $prev['addClass']('off');
           } else {
-            if (cd === itemLength - 1) return $next['addClass']('off');
+            if (cd === itemLength - 1) {
+              return $next['addClass']('off');
+            }
           }
         };
       }
       /*
             implement core event handling
       */
+
       startX = 0;
       endX = 0;
       startTime = 0;
@@ -206,14 +219,18 @@
         touch = isMobile ? e.touches[0] : e;
         switch (e.type) {
           case EventType.MOVE:
-            if (options['lockScroll']) e.preventDefault();
+            if (options['lockScroll']) {
+              e.preventDefault();
+            }
             if (isMoving) {
               diffX = containerBaseX + touch.pageX - startX;
               return $box['css'](CSS_TRANSFORM, getCssTranslateValue(startLeft + diffX));
             }
             break;
           case EventType.START:
-            if (!isMobile) e.preventDefault();
+            if (!isMobile) {
+              e.preventDefault();
+            }
             isMoving = true;
             startTime = (new Date()).getTime();
             startX = isMobile ? touch.pageX : e.clientX;
@@ -256,17 +273,22 @@
         if (cd > itemLength - 1) {
           cd = itemLength - 1;
         } else {
-          if (cd < 0) cd = 0;
+          if (cd < 0) {
+            cd = 0;
+          }
         }
         $box['css'](CSS_TRANSFORM, getCssTranslateValue(containerBaseX + itemWidth * cd * -1));
         if (useNav) {
           $navChildren['removeClass']('selected')['eq'](cd)['addClass']('selected');
         }
-        if (useArrows) return disableArrow();
+        if (useArrows) {
+          return disableArrow();
+        }
       };
       /*
             initialize base variable and bind events
       */
+
       $container['height'](boxHeight)['scroll'](function() {
         return $(this)['scrollLeft'](0);
       });
