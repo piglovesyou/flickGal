@@ -9,8 +9,8 @@ Main features of this plugin are:
 - Designer friendry. (HTML based)
 
 This plugin cannot do:
-- Horizontal scroll (who ever wants?)
-- Auto scroll. This will need a lot of options, which I don't like.
+- Vertical flick scroll (who ever wants?)
+- Auto scroll with timer. This will need a lot of options that I don't like.
 
 ## Demo
 
