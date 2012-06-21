@@ -1,6 +1,6 @@
 ###
 
- jQuery flickGal 1.2
+ jQuery flickGal 1.2.1
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo)
  
@@ -177,25 +177,40 @@ window['jQuery']['fn']['flickGal'] = (options) ->
     endX = 0
     startTime = 0
     startLeft = 0
-    isMoving = false
+
+    # Closer scope chain to refer, faster (maybe..).
+    STATE =      
+      IS_MOVING: 1
+      IS_EDGE:   2
+      IS_FIRST:  4
+      IS_LAST:   8
+    state = 0
+
     touchHandler = (e) ->
       touch = if isMobile then e.touches[0] else e
       switch e.type
         when EventType.MOVE
           e.preventDefault()  if options['lockScroll']
-          if isMoving
-            diffX = containerBaseX + touch.pageX - startX
-            $box['css'] CSS_TRANSFORM, getCssTranslateValue(startLeft + diffX)
+          if state & STATE.IS_MOVING
+            diffX = touch.pageX - startX
+            if state & STATE.IS_EDGE and
+              (((state & STATE.IS_FIRST) && diffX > 0) or
+               ((state & STATE.IS_LAST)  && diffX < 0))
+              diffX = diffX / 2
+            $box['css'] CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft + diffX)
         when EventType.START
           e.preventDefault()  unless isMobile
-          isMoving = true
+          state |= STATE.IS_MOVING
+          state |= STATE.IS_FIRST  if cd is 0
+          state |= STATE.IS_LAST   if cd is itemLength - 1
+          state |= STATE.IS_EDGE   if state & STATE.IS_FIRST or state & STATE.IS_LAST
           startTime = (new Date()).getTime()
           startX = if isMobile then touch.pageX else e.clientX
           startLeft = getTranslateX() - containerOffsetLeft - containerBaseX
           $box['removeClass']('moving')['css'] CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft)  if $box['hasClass']('moving')
         when EventType.END
           startLeft = 0
-          isMoving = false
+          state = 0
           endX = if isMobile then e.changedTouches[0].pageX else e.clientX
           moveToIndex()
     

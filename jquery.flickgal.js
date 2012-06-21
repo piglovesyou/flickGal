@@ -1,7 +1,7 @@
 
 /*
 
- jQuery flickGal 1.2
+ jQuery flickGal 1.2.1
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo)
  
@@ -119,7 +119,7 @@
             private variables
       */
 
-      var $box, $container, $flickBox, $items, $nav, $navA, $navChildren, $next, $prev, box, boxHeight, boxWidth, cd, containerBaseX, containerOffsetLeft, disableArrow, endX, getGeckoTranslateX, getTranslateX, isMoving, itemLength, itemWidth, maxLeft, minLeft, moveToIndex, nextTappedHandler, prevTappedHandler, redefineLeftOffset, startLeft, startTime, startX, touchEvents, touchHandler, transitionEndHandler, useArrows, useNav;
+      var $box, $container, $flickBox, $items, $nav, $navA, $navChildren, $next, $prev, STATE, box, boxHeight, boxWidth, cd, containerBaseX, containerOffsetLeft, disableArrow, endX, getGeckoTranslateX, getTranslateX, itemLength, itemWidth, maxLeft, minLeft, moveToIndex, nextTappedHandler, prevTappedHandler, redefineLeftOffset, startLeft, startTime, startX, state, touchEvents, touchHandler, transitionEndHandler, useArrows, useNav;
       $flickBox = $(this);
       $container = $('.container', $flickBox)['css']({
         overflow: 'hidden'
@@ -213,7 +213,13 @@
       endX = 0;
       startTime = 0;
       startLeft = 0;
-      isMoving = false;
+      STATE = {
+        IS_MOVING: 1,
+        IS_EDGE: 2,
+        IS_FIRST: 4,
+        IS_LAST: 8
+      };
+      state = 0;
       touchHandler = function(e) {
         var diffX, touch;
         touch = isMobile ? e.touches[0] : e;
@@ -222,16 +228,28 @@
             if (options['lockScroll']) {
               e.preventDefault();
             }
-            if (isMoving) {
-              diffX = containerBaseX + touch.pageX - startX;
-              return $box['css'](CSS_TRANSFORM, getCssTranslateValue(startLeft + diffX));
+            if (state & STATE.IS_MOVING) {
+              diffX = touch.pageX - startX;
+              if (state & STATE.IS_EDGE && (((state & STATE.IS_FIRST) && diffX > 0) || ((state & STATE.IS_LAST) && diffX < 0))) {
+                diffX = diffX / 2;
+              }
+              return $box['css'](CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft + diffX));
             }
             break;
           case EventType.START:
             if (!isMobile) {
               e.preventDefault();
             }
-            isMoving = true;
+            state |= STATE.IS_MOVING;
+            if (cd === 0) {
+              state |= STATE.IS_FIRST;
+            }
+            if (cd === itemLength - 1) {
+              state |= STATE.IS_LAST;
+            }
+            if (state & STATE.IS_FIRST || state & STATE.IS_LAST) {
+              state |= STATE.IS_EDGE;
+            }
             startTime = (new Date()).getTime();
             startX = isMobile ? touch.pageX : e.clientX;
             startLeft = getTranslateX() - containerOffsetLeft - containerBaseX;
@@ -241,7 +259,7 @@
             break;
           case EventType.END:
             startLeft = 0;
-            isMoving = false;
+            state = 0;
             endX = isMobile ? e.changedTouches[0].pageX : e.clientX;
             return moveToIndex();
         }
