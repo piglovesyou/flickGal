@@ -8,7 +8,7 @@ Main features of this plugin are:
 - Light weight. (3.2k)
 - Designer friendry. (HTML based)
 
-This plugin cannot do:
+This plugin __cannot__ do:
 - Vertical flick scroll (who ever wants?)
 - Auto scroll with timer. This will need a lot of options that I don't like.
 
@@ -19,6 +19,10 @@ Here is a quick demo.
 http://stakam.net/jquery/flickgal/demo
 
 Tested on iOS Safari and Android 4.0. PC browsers? Yeah. IE? Na.
+
+
+## Download
+[Right click on this link](https://raw.github.com/piglovesyou/flickGal/master/jquery.flickgal.min.js) or you can just download this project.
 
 
 ## How to use
@@ -88,7 +92,7 @@ $(function(){
 | lockScroll | true  | Lock horizontal scroll while sliding. If you have large images in .item element, you may want this fasle. |
 
 
-## Lisence
+## Licence
 ```
 Dual licensed under the MIT and GPL licenses:
  http://www.opensource.org/licenses/mit-license.php
