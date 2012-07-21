@@ -5,10 +5,10 @@ A light weight jQuery plugin to implement flick gallery for smart phone.
 
 ## Features
 Main features of this plugin are:
-- Light weight. (3.2k)
+- Light weight. (3.4k)
 - Designer friendry. (HTML based)
 
-This plugin cannot do:
+This plugin __cannot__ do:
 - Vertical flick scroll (who ever wants?)
 - Auto scroll with timer. This will need a lot of options that I don't like.
 
@@ -19,6 +19,10 @@ Here is a quick demo.
 http://stakam.net/jquery/flickgal/demo
 
 Tested on iOS Safari and Android 4.0. PC browsers? Yeah. IE? Na.
+
+
+## Download
+[Right click on this link](https://raw.github.com/piglovesyou/flickGal/master/jquery.flickgal.min.js) or you can just download this project.
 
 
 ## How to use
@@ -93,15 +97,24 @@ FlickGal provides 3 custom events.
 ```javascript
 $(function(){
   $(".yourElement").flickGal()
-		.on('fg_flickstart', function (e, index) {
-			// Emitted when a user start flicking.
+    .on('fg_flickstart', function (e, index) {
+      // Emitted when a user start flicking.
 
-		}).on('fg_flickend', function (e, index) {
-			// Emitted when a user end flicking.
+    }).on('fg_flickend', function (e, index) {
+      // Emitted when a user end flicking.
 
-		}).on('fg_change', function (e, index) {
-			// Emitted when displayed item will be changed.
-		});
+    }).on('fg_change', function (e, index) {
+      // Emitted when displayed item will be changed.
+    });
+    .on('fg_flickstart', function (e, index) {
+      // Emitted when a user start flicking.
+
+    }).on('fg_flickend', function (e, index) {
+      // Emitted when a user end flicking.
+
+    }).on('fg_change', function (e, index) {
+      // Emitted when displayed item will be changed.
+    });
 });
 ```
 
