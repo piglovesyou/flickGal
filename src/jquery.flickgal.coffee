@@ -1,6 +1,6 @@
 ###
 
- jQuery flickGal 1.2.1
+ jQuery flickGal 1.2.2
  
  Copyright (c) 2011 Soichi Takamura (http://stakam.net/jquery/flickgal/demo)
  
@@ -57,6 +57,12 @@ TRANSLATE_PREFIX = if currentBrowser == BrowserType.WEBKIT then 'translate3d(' e
 TRANSLATE_SUFFIX = if currentBrowser == BrowserType.WEBKIT then 'px,0,0)' else 'px,0)'
 
 EventType =
+  # Original events triggered.
+  FG_FLICKSTART: 'fg_flickstart'
+  FG_FLICKEND: 'fg_flickend'
+  FG_CHANGE: 'fg_change'
+  
+  # Native events.
   START: if isMobile then 'touchstart' else 'mousedown'
   END: if isMobile then 'touchend' else 'mouseup'
   MOVE: if isMobile then 'touchmove' else 'mousemove'
@@ -114,7 +120,7 @@ window['jQuery']['fn']['flickGal'] = (options) ->
     boxHeight = $items['outerHeight'](true)
     minLeft = 0
     maxLeft = ((itemWidth * itemLength) - itemWidth) * -1
-    cd = 0 # currently displayed index
+    currentIndex = 0 # currently displayed index
     containerOffsetLeft = 0
     containerBaseX = 0
 
@@ -136,7 +142,7 @@ window['jQuery']['fn']['flickGal'] = (options) ->
     redefineLeftOffset = (e) ->
       containerOffsetLeft = $container['offset']()['left']
       containerBaseX = ($container['innerWidth']() - itemWidth) / 2
-      moveToIndex cd
+      moveTo currentIndex
     
 
     ###
@@ -156,18 +162,18 @@ window['jQuery']['fn']['flickGal'] = (options) ->
     useArrows = !!($prev['length'] and $next['length'])
     if useArrows
       prevTappedHandler = ->
-        cd = if cd > 0 then cd - 1 else if options['infinitCarousel'] then itemLength - 1 else cd
-        moveToIndex cd
+        currentIndex = if currentIndex > 0 then currentIndex - 1 else if options['infinitCarousel'] then itemLength - 1 else currentIndex
+        moveTo currentIndex
       
       nextTappedHandler = ->
-        cd = if cd < itemLength - 1 then cd + 1 else if options['infinitCarousel'] then 0 else cd
-        moveToIndex cd
+        currentIndex = if currentIndex < itemLength - 1 then currentIndex + 1 else if options['infinitCarousel'] then 0 else currentIndex
+        moveTo currentIndex
       
       disableArrow = ->
         $prev.add($next)['removeClass'] 'off'
-        if cd == 0
+        if currentIndex == 0
           $prev['addClass'] 'off'
-        else $next['addClass'] 'off'  if cd == itemLength - 1
+        else $next['addClass'] 'off'  if currentIndex == itemLength - 1
 
 
     ###
@@ -189,6 +195,7 @@ window['jQuery']['fn']['flickGal'] = (options) ->
     touchHandler = (e) ->
       touch = if isMobile then e.touches[0] else e
       switch e.type
+
         when EventType.MOVE
           e.preventDefault()  if options['lockScroll']
           if state & STATE.IS_MOVING
@@ -198,44 +205,49 @@ window['jQuery']['fn']['flickGal'] = (options) ->
                ((state & STATE.IS_LAST)  && diffX < 0))
               diffX = diffX / 2
             $box['css'] CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft + diffX)
+            
         when EventType.START
           e.preventDefault()  unless isMobile
           state |= STATE.IS_MOVING
-          state |= STATE.IS_FIRST  if cd is 0
-          state |= STATE.IS_LAST   if cd is itemLength - 1
+          state |= STATE.IS_FIRST  if currentIndex is 0
+          state |= STATE.IS_LAST   if currentIndex is itemLength - 1
           state |= STATE.IS_EDGE   if state & STATE.IS_FIRST or state & STATE.IS_LAST
           startTime = (new Date()).getTime()
           startX = if isMobile then touch.pageX else e.clientX
           startLeft = getTranslateX() - containerOffsetLeft - containerBaseX
+          $flickBox['trigger'](EventType.FG_FLICKSTART, [currentIndex])
           $box['removeClass']('moving')['css'] CSS_TRANSFORM, getCssTranslateValue(containerBaseX + startLeft)  if $box['hasClass']('moving')
+
         when EventType.END
           startLeft = 0
-          state = 0
+          state = 0 #reset
           endX = if isMobile then e.changedTouches[0].pageX else e.clientX
-          moveToIndex()
+          index = calcNextIndex_()
+          $flickBox['trigger'](EventType.FG_FLICKEND, [index])
+          moveTo index
     
     transitionEndHandler = ->
       $box['removeClass'] 'moving'
-    
-    moveToIndex = (opt_cd) ->
-      $box['addClass'] 'moving'
-      if typeof (opt_cd) == 'number'
-        cd = opt_cd
+
+    calcNextIndex_ = ->
+      endTime = new Date().getTime()
+      timeDiff = endTime - startTime
+      distanceX = endX - startX
+      index = currentIndex
+      if timeDiff < 300 and Math.abs(distanceX) > 30
+        if distanceX > 0 then index-- else index++
       else
-        endTime = new Date().getTime()
-        timeDiff = endTime - startTime
-        distanceX = endX - startX
-        if timeDiff < 300 and Math.abs(distanceX) > 30
-          if distanceX > 0 then cd-- else cd++
-        else
-          currX = getTranslateX() - containerOffsetLeft
-          d = Math.abs((minLeft + currX) - containerBaseX - itemWidth / 2)
-          cd = Math.floor(d / itemWidth)
-      if cd > itemLength - 1
-        cd = itemLength - 1
-      else cd = 0  if cd < 0
-      $box['css'] CSS_TRANSFORM, getCssTranslateValue(containerBaseX + itemWidth * cd * -1)
-      $navChildren['removeClass']('selected')['eq'](cd)['addClass'] 'selected'  if useNav
+        currX = getTranslateX() - containerOffsetLeft
+        d = Math.abs((minLeft + currX) - containerBaseX - itemWidth / 2)
+        index = Math.floor(d / itemWidth)
+      return Math.max(0, Math.min(index, itemLength - 1))
+    
+    moveTo = (index) ->
+      $box['addClass'] 'moving'
+      $flickBox['trigger'](EventType.FG_CHANGE, [index])  if currentIndex isnt index
+      currentIndex = index
+      $box['css'] CSS_TRANSFORM, getCssTranslateValue(containerBaseX + itemWidth * currentIndex * -1)
+      $navChildren['removeClass']('selected')['eq'](currentIndex)['addClass'] 'selected'  if useNav
       disableArrow()  if useArrows
 
 
@@ -254,7 +266,7 @@ window['jQuery']['fn']['flickGal'] = (options) ->
       $navChildren['eq'](0)['addClass'] 'selected'
       $navA['bind'](EventType.START, (e) ->
         index = $navA['index'](this)
-        moveToIndex index
+        moveTo index
         false
       )['bind'] EventType.CLICK, ->
         false
