@@ -106,15 +106,6 @@ $(function(){
     }).on('fg_change', function (e, index) {
       // Emitted when displayed item will be changed.
     });
-    .on('fg_flickstart', function (e, index) {
-      // Emitted when a user start flicking.
-
-    }).on('fg_flickend', function (e, index) {
-      // Emitted when a user end flicking.
-
-    }).on('fg_change', function (e, index) {
-      // Emitted when displayed item will be changed.
-    });
 });
 ```
 
