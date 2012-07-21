@@ -88,6 +88,24 @@ $(function(){
 | lockScroll | true  | Lock horizontal scroll while sliding. If you have large images in .item element, you may want this fasle. |
 
 
+## Advanced use
+FlickGal provides 3 custom events.
+```javascript
+$(function(){
+  $(".yourElement").flickGal()
+		.on('fg_flickstart', function (e, index) {
+			// Emitted when a user start flicking.
+
+		}).on('fg_flickend', function (e, index) {
+			// Emitted when a user end flicking.
+
+		}).on('fg_change', function (e, index) {
+			// Emitted when displayed item will be changed.
+		});
+});
+```
+
+
 ## Lisence
 ```
 Dual licensed under the MIT and GPL licenses:
