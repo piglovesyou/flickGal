@@ -112,6 +112,7 @@ $(function(){
 
 ## Lisence
 ```
+Copyright (c) 2012 Soichi Takamura (http://stakam.net/)
 Dual licensed under the MIT and GPL licenses:
  http://www.opensource.org/licenses/mit-license.php
  http://www.gnu.org/licenses/gpl.html
