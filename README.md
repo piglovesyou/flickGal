@@ -6,11 +6,11 @@ A light weight jQuery plugin to implement flick gallery for smart phone.
 ## Features
 Main features of this plugin are:
 - Light weight. (3.4k)
-- Designer friendry. (HTML based)
+- Designer friendly. (HTML based)
 
 This plugin __cannot__ do:
 - Vertical flick scroll (who ever wants?)
-- Auto scroll with timer. This will need a lot of options that I don't like.
+- Auto scrolling with timer. This will need a lot of options that I don't like.
 
 ## Demo
 
@@ -22,7 +22,7 @@ Tested on iOS Safari and Android 4.0. PC browsers? Yeah. IE? Na.
 
 
 ## Download
-[Right click on this link](https://raw.github.com/piglovesyou/flickGal/master/jquery.flickgal.min.js) or you can just download this project.
+[Right click on this link](https://raw.github.com/piglovesyou/flickGal/master/jquery.flickgal.min.js) or you can just clone this project.
 
 
 ## How to use
@@ -31,7 +31,7 @@ Only 3 steps!
 ```html
 <div class="yourElement"><!-- Main container -->
 
-  <div class="container"><!-- Flickable element (required) -->
+  <div class="container"><!-- Flickable elements container (required) -->
     <div class="containerInner"><!-- (required) -->
       <div id="sea01" class="item"><img alt="" src="images/sea/01.jpg" /></div><!-- must have `item' for class name -->
       <div id="sea02" class="item"><img alt="" src="images/sea/02.jpg" /></div>
@@ -39,7 +39,7 @@ Only 3 steps!
     </div>
   </div>
 
-  <div class="nav"><!-- Tab, indicator or others (optional) -->
+  <div class="nav"><!-- Tab, indicator or something like that (optional) -->
     <ul>
       <li class="sea01"><a href="#sea01">・</a></li>
       <li class="sea02"><a href="#sea02">・</a></li>
@@ -47,7 +47,7 @@ Only 3 steps!
     </ul>
   </div>
 
-  <div class="arrows"><!-- Next and prev element (optional) -->
+  <div class="arrows"><!-- Next and prev buttons (optional) -->
     <span class="prev">Previous</span><!-- must have `prev' for className -->
     <span class="next">Next</span><!-- must have `next' for className -->
   </div>
@@ -98,13 +98,13 @@ FlickGal provides 3 custom events.
 $(function(){
   $(".yourElement").flickGal()
     .on('fg_flickstart', function (e, index) {
-      // Emitted when a user start flicking.
+      // Emitted when a user starts flicking.
 
     }).on('fg_flickend', function (e, index) {
-      // Emitted when a user end flicking.
+      // Emitted when a user ends flicking.
 
     }).on('fg_change', function (e, index) {
-      // Emitted when displayed item will be changed.
+      // Emitted when the item on center changed.
     });
 });
 ```
