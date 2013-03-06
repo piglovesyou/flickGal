@@ -1,5 +1,5 @@
 # flickGal
-![flickGal](/piglovesyou/flickGal/raw/master/src/title.png)
+![flickGal](https://raw.github.com/piglovesyou/flickGal/master/src/title.png)
 
 A light weight jQuery plugin to implement flick gallery for smart phone.
 
