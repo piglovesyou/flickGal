@@ -1,0 +1,93 @@
+
+/* ########### Styles other than FlickGal. ########### */
+body {
+  color: rgba(0,0,0,.6);
+}
+ul {
+  margin: 0;
+  padding: 0;
+}
+h1 {
+  color: rgba(0,0,0,.8);
+  margin: 60px 0;
+}
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+.message {
+  text-align: center;
+}
+
+
+
+/* ########### FlickGal ########### */
+
+.yourFlickgalWrap .item { width: 200px }
+.yourFlickgalWrap .moving {
+  -webkit-transition: -webkit-transform .2s ease-out;
+  -moz-transition: -moz-transform .2s ease-out;
+}
+
+.yourFlickgalWrap .containerInner {
+  overflow: hidden;
+}
+.yourFlickgalWrap .containerInner .item {
+  display: inline-block;
+  height: 180px;
+  line-height: 180px;
+  text-align: center;
+  margin: 0 5px;
+  border: 1px #10A29A solid;
+  background: lightseagreen;
+  color: rgba(0,0,0,.4);
+  font-weight: bold;
+  font-size: 200%;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.yourFlickgalWrap .nav {
+  text-align: center;
+}
+.yourFlickgalWrap .nav li {
+  display: inline-block;
+}
+
+.yourFlickgalWrap .nav li a {
+  text-decoration: none;
+  color: rgba(0,0,0,.2);
+  font-size: 300%;
+}
+.yourFlickgalWrap .nav li a:hover {
+  background: lightgray;
+}
+.yourFlickgalWrap .nav li a:active {
+  background: gray;
+}
+.yourFlickgalWrap .nav .selected a {
+  color: rgba(0,0,0,1);
+}
+.yourFlickgalWrap .arrows {
+  font-size: 300%;
+}
+.yourFlickgalWrap .arrows a {
+  text-decoration: none;
+  color: rgba(0,0,0,.6);
+}
+.yourFlickgalWrap .arrows a:hover {
+  background: lightgray;
+  color: rgba(0,0,0,1);
+}
+.yourFlickgalWrap .arrows a:active {
+  background: gray;
+}
+.yourFlickgalWrap .arrows a.off {
+  color: rgba(0,0,0,.2);
+  background: none;
+}
+.yourFlickgalWrap .arrows .prev {
+  float: left;
+}
+.yourFlickgalWrap .arrows .next {
+  float: right;
+}

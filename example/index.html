@@ -1,0 +1,61 @@
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+	<title>flickGal - Example</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="../jquery.flickgal.min.js"></script>
+  <script>
+    $(function() {
+      var $message = $('.message');
+
+      $('.yourFlickgalWrap').flickGal()
+        .on('fg_flickstart', function(e, index) {
+          $message.html('The event <b>fg_flickstart</b> is emitted.');
+        })
+        .on('fg_flickend', function(e, index) {
+          $message.html('The event <b>fg_flickend</b> is emitted.');
+        })
+        .on('fg_change', function(e, index) {
+          $message.html('The event <b>fg_change</b> is emitted.');
+        });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>flickGal - Example</h1>
+
+    <div class="yourFlickgalWrap">
+
+      <div class="container">
+        <div class="containerInner">
+          <div id="sea01" class="item">Item 1</div>
+          <div id="sea02" class="item">Item 2</div>
+          <div id="sea03" class="item">Item 3</div>
+        </div>
+      </div>
+
+      <div class="arrows">
+        <a href="javascript:void(0);" class="prev">&lt;&lt;&nbsp;</a>
+        <a href="javascript:void(0);" class="next">&nbsp;&gt;&gt;</a>
+      </div>
+
+      <div class="nav">
+        <ul>
+          <li class="sea01"><a href="#sea01">・</a></li>
+          <li class="sea02"><a href="#sea02">・</a></li>
+          <li class="sea03"><a href="#sea03">・</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="message"></div>
+
+  </div>
+</body>
+</html>
