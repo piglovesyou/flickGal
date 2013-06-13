@@ -1,0 +1,12 @@
+{
+  "id": "plovr-sample",
+  "externs": [
+    "//jquery-1.7.js",
+  ],
+  "inputs": "./jquery.flickgal.js",
+  "mode": "ADVANCED",
+  "level": "VERBOSE",
+  "output-wrapper": "(function(){%output%})()",
+  "output-file": "./jquery.flickgal.min.js"
+}
+
