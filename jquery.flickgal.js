@@ -17,7 +17,20 @@
 
 
 (function() {
-  var BrowserType, CSS_PREFIX, CSS_TRANSFORM, CSS_TRANSFORM_ORIGIN, CSS_TRANSITION, EventType, TRANSLATE_PREFIX, TRANSLATE_SUFFIX, currentBrowser, getCssTranslateValue, isAndroid, isIOS, isMobile, userAgent;
+  var BrowserType,
+      CSS_PREFIX,
+      CSS_TRANSFORM,
+      CSS_TRANSFORM_ORIGIN,
+      CSS_TRANSITION,
+      EventType,
+      TRANSLATE_PREFIX,
+      TRANSLATE_SUFFIX,
+      currentBrowser,
+      getCssTranslateValue,
+      isAndroid,
+      isIOS,
+      isMobile,
+      userAgent;
 
   BrowserType = {
     WEBKIT: 0,
@@ -122,7 +135,44 @@
             private variables
       */
 
-      var $box, $container, $flickBox, $items, $nav, $navA, $navChildren, $next, $prev, STATE, box, boxHeight, boxWidth, calcNextIndex_, containerBaseX, containerOffsetLeft, currentIndex, disableArrow, endX, getGeckoTranslateX, getTranslateX, itemLength, itemWidth, maxLeft, minLeft, moveTo, nextTappedHandler, prevTappedHandler, redefineLeftOffset, startLeft, startTime, startX, state, touchEvents, touchHandler, transitionEndHandler, useArrows, useNav;
+      var $box,
+          $container,
+          $flickBox,
+          $items,
+          $nav,
+          $navA,
+          $navChildren,
+          $next,
+          $prev,
+          STATE,
+          box,
+          boxHeight,
+          boxWidth,
+          calcNextIndex_,
+          containerBaseX,
+          containerOffsetLeft,
+          currentIndex,
+          disableArrow,
+          endX,
+          getGeckoTranslateX,
+          getTranslateX,
+          itemLength,
+          itemWidth,
+          maxLeft,
+          minLeft,
+          moveTo,
+          nextTappedHandler,
+          prevTappedHandler,
+          redefineLeftOffset,
+          startLeft,
+          startTime,
+          startX,
+          state,
+          touchEvents,
+          touchHandler,
+          transitionEndHandler,
+          useArrows,
+          useNav;
       $flickBox = $(this);
       $container = $('.container', $flickBox)['css']({
         overflow: 'hidden'
@@ -168,7 +218,7 @@
           return getGeckoTranslateX($box);
         }
       };
-      redefineLeftOffset = function(e) {
+      redefineLeftOffset = function() {
         containerOffsetLeft = $container['offset']()['left'];
         containerBaseX = ($container['innerWidth']() - itemWidth) / 2;
         return moveTo(currentIndex);
