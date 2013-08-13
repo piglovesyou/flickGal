@@ -124,7 +124,8 @@
     */
     options = $['extend']({
       'infinitCarousel': false,
-      'lockScroll': true
+      'lockScroll': true,
+      'startIndex': 0
     }, options);
     /*
         iterate each element in jQuery object
@@ -192,7 +193,7 @@
       boxHeight = $items['outerHeight'](true);
       minLeft = 0;
       maxLeft = ((itemWidth * itemLength) - itemWidth) * -1;
-      currentIndex = 0;
+      currentIndex = $.isNumeric(options['startIndex']) ? options['startIndex'] : 0;
       containerOffsetLeft = 0;
       containerBaseX = 0;
       /*

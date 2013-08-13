@@ -6,6 +6,8 @@
 
 USAGE_TEXT="\n
     ---- Usage ---- \n\n\
+    ./run.sh setup    # fetch compiler
+    ./run.sh compile  # compile jquery.flickgal.js
         \n"
 
 
